@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ public static class UtilFuncs
     /// <summary>
     /// Takes in any number of keys and returns the first one of them that's down, in the order they were passed.<br/>
     /// This allows you to use a switch statement with <paramref name="keyDown"/> instead of a ton of else-ifs.<br/><br/>
-    /// <i>Originally made for 603 Game 3 by Patrick Mitchell.</i>
+    /// <i>Originally made for IGME 603 Game 3 by Patrick Mitchell.</i>
     /// </summary>
     /// <param name="keyDown">The first key in <paramref name="codes"/> that was found to be down, in the order they were passed.<br/>
     /// Equals <see cref="KeyCode.None"/> if none of them were found to be down.</param>
@@ -18,6 +19,21 @@ public static class UtilFuncs
         for (int i = 0; i < codes.Length; i++)
         {
             if (Input.GetKeyDown(codes[i]))
+            {
+                keyDown = codes[i];
+                return true;
+            }
+        }
+
+        keyDown = KeyCode.None;
+        return false;
+    }
+    ///<inheritdoc cref="GetMultiKeyDown(out KeyCode, KeyCode[])"/>
+    public static bool GetMultiKey(out KeyCode keyDown, params KeyCode[] codes)
+    {
+        for (int i = 0; i < codes.Length; i++)
+        {
+            if (Input.GetKey(codes[i]))
             {
                 keyDown = codes[i];
                 return true;
