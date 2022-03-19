@@ -6,11 +6,8 @@ using UnityEngine;
 public class ConstructionManager : MonoBehaviour
 {
     [SerializeField] private Camera playerCam;
-    [SerializeField] private GameObject buildPrefab;
-
-    [SerializeField] private SingleTargetTower[] buildPrefabs;
-
-    public int buildPrefabIndex = 0;
+    [SerializeField] private GameObject[] buildPrefabs;
+    [SerializeField] int currentBPIndex = 0;
 
     [SerializeField] private Vector3 buildOffset;
     [SerializeField] [Min(0)] private int tileLayerIndex = 5;
@@ -69,7 +66,7 @@ public class ConstructionManager : MonoBehaviour
         switch (currentCursorState)
         {
             case CursorState.Building:
-                CastAndCheckInput(() => buildOnTile?.Invoke(hoveredTile, buildPrefabs[buildPrefabIndex].gameObject, buildOffset));
+                CastAndCheckInput(() => buildOnTile?.Invoke(hoveredTile, buildPrefabs[currentBPIndex].gameObject, buildOffset));
                 break;
             case CursorState.Harvesting:
                 CastAndCheckInput(() => destroyTileBuilding?.Invoke(hoveredTile));
@@ -113,8 +110,6 @@ public class ConstructionManager : MonoBehaviour
             {
                 if (Time.timeScale != 0)
                 {
-                    SingleTargetTower tower = buildPrefabs[buildPrefabIndex];
-
                     onInput();
                     cursorStateChange?.Invoke(CursorState.Neutral);
                 }

@@ -130,7 +130,6 @@ public class GridTile : MonoBehaviour
 
     public void TrySetConnection(GridTile[,,] tileMatrix, Vector3Int index, Vector3Int connectDir)
     {
-        Debug.Log($"{name}: index is {index}.");
         //Add connect dir to this tile's index to get the index in the desired direction.
         index += connectDir;
 

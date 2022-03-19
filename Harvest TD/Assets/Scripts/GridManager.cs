@@ -20,9 +20,12 @@ public class GridManager : MonoBehaviour
     public Vector3Int GridSize { get => gridSize; }
     public Vector2 TileSpacing { get => tileSpacing; }
 
-    private GridTile[,,] tiles;
+    private GridTile[,,] tiles = { };
 
-    void Start()
+    private void OnValidate() => ValidationUtility.SafeOnValidate(() => InitGrid());
+    private void Start() => InitGrid();
+
+    private void InitGrid()
     {
         if (!tilePrefab)
         {
@@ -30,9 +33,18 @@ public class GridManager : MonoBehaviour
             return;
         }
 
+#if UNITY_EDITOR
+        foreach (Transform child in transform)
+        {
+            if (child.CompareTag("Tile"))
+            {
+                UnityEditor.EditorApplication.delayCall += () => DestroyImmediate(child.gameObject);
+            }
+        }
+#endif
+
         tiles = new GridTile[gridSize.x, gridSize.y, gridSize.z];
 
-        //Instantiate all the tiles
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
