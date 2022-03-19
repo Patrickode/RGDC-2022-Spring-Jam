@@ -35,7 +35,20 @@ public class CameraMovement : MonoBehaviour
             moveDir += -transform.up;
         if (Input.GetKey(KeyCode.E))
             moveDir += transform.up;
+    }
 
+    private void FixedUpdate()
+    {
+        rBody.angularVelocity = Vector3.zero;
+        //If we don't have a move direction, only zero velocity if it's not zeroed already.
+        if (moveDir != Vector3.zero || rBody.velocity != Vector3.zero)
+        {
+            rBody.velocity = moveDir.normalized * moveSpeed * Time.deltaTime;
+        }
+    }
+
+    private void LateUpdate()
+    {
         if (Input.GetKey(KeyCode.Mouse1))
         {
             Vector3 mouseDelta = Input.mousePosition - prevMousePos;
@@ -47,15 +60,5 @@ public class CameraMovement : MonoBehaviour
         }
 
         prevMousePos = Input.mousePosition;
-    }
-
-    private void FixedUpdate()
-    {
-        rBody.angularVelocity = Vector3.zero;
-        //If we don't have a move direction, only zero velocity if it's not zeroed already.
-        if (moveDir != Vector3.zero || rBody.velocity != Vector3.zero)
-        {
-            rBody.velocity = moveDir.normalized * moveSpeed * Time.deltaTime;
-        }
     }
 }
