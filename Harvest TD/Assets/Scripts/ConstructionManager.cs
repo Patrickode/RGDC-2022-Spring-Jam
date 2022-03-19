@@ -79,29 +79,6 @@ public class ConstructionManager : MonoBehaviour
         }
     }
 
-    private bool CastFromMouseToTiles()
-    {
-        Ray mouseRay = playerCam.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(mouseRay, out RaycastHit hit, 10000, 1 << tileLayerIndex))
-        {
-            if (hoveredTile != hit.collider.gameObject)
-            {
-                tileHover?.Invoke(hoveredTile, false);
-            }
-            hoveredTile = hit.collider.gameObject;
-            tileHover?.Invoke(hoveredTile, true);
-
-            return true;
-        }
-        else if (hoveredTile)
-        {
-            tileHover?.Invoke(hoveredTile, false);
-            hoveredTile = null;
-        }
-
-        return false;
-    }
-
     private void CastAndCheckInput(Action onInput)
     {
         if (CastFromMouseToTiles())
@@ -119,6 +96,32 @@ public class ConstructionManager : MonoBehaviour
         {
             cursorStateChange?.Invoke(CursorState.Neutral);
         }
+    }
+
+    private bool CastFromMouseToTiles()
+    {
+        //Cast a ray from the cam, and proceed if it hits a tile.
+        Ray mouseRay = playerCam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(mouseRay, out RaycastHit hit, 10000)
+            && hit.collider.gameObject.layer == tileLayerIndex)
+        {
+            //If the hit tile isn't hoveredTile, the hit tile should be the new hoveredTile.
+            if (hoveredTile != hit.collider.gameObject)
+                tileHover?.Invoke(hoveredTile, false);
+
+            hoveredTile = hit.collider.gameObject;
+            tileHover?.Invoke(hoveredTile, true);
+
+            return true;
+        }
+        //If we didn't hit a tile, and we were hovering a tile before this, unhover that tile.
+        else if (hoveredTile)
+        {
+            tileHover?.Invoke(hoveredTile, false);
+            hoveredTile = null;
+        }
+
+        return false;
     }
 
     private void SwitchStateOnInput()

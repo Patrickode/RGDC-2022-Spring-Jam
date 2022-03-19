@@ -22,7 +22,7 @@ public class GridManager : MonoBehaviour
 
     private GridTile[,,] tiles = { };
 
-    private void OnValidate() => ValidationUtility.SafeOnValidate(() => InitGrid());
+    private void OnValidate() => ValidationUtility.SafeOnValidate(() => { if (this) InitGrid(); });
     private void Start() => InitGrid();
 
     private void InitGrid()
@@ -38,13 +38,13 @@ public class GridManager : MonoBehaviour
         {
             if (child.CompareTag("Tile"))
             {
-                UnityEditor.EditorApplication.delayCall += () => DestroyImmediate(child.gameObject);
+                UnityEditor.EditorApplication.delayCall += () => { if (this && child) DestroyImmediate(child.gameObject); };
             }
         }
 #endif
-
         tiles = new GridTile[gridSize.x, gridSize.y, gridSize.z];
 
+        //Start from the bottom left; go forward, then go up, then go right.
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
