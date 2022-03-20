@@ -17,7 +17,7 @@ public abstract class SingleTargetTower : MonoBehaviour
     [Tooltip("How much money the player needs to place this tower.")]
     public int cost = 100;
 
-    [SerializeField] protected Slider healthSlider;
+    [SerializeField] protected Slider expireSlider;
     protected Image healthFill;
 
     private HashSet<GameObject> targetsInRange;
@@ -37,7 +37,7 @@ public abstract class SingleTargetTower : MonoBehaviour
     protected virtual void Start()
     {
         targetsInRange = new HashSet<GameObject>();
-        healthFill = healthSlider.fillRect.GetComponent<Image>();
+        healthFill = expireSlider.fillRect.GetComponent<Image>();
 
         //Use a coroutine instead of Destroy's built in delay param to make it cancellable
         ResetLifespan();
@@ -52,8 +52,8 @@ public abstract class SingleTargetTower : MonoBehaviour
             () =>
             {
                 progress += Time.deltaTime / lifespan;
-                healthSlider.value = 1 - progress;
-                healthFill.color = Color.Lerp(Color.gray, Color.blue, healthSlider.value / 1);
+                expireSlider.value = progress;
+                healthFill.color = Color.Lerp(Color.gray, Color.blue, expireSlider.value / 1);
 
                 if (progress >= 1)
                     Destroy(gameObject);
