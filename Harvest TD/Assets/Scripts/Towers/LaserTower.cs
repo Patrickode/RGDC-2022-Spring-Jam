@@ -49,11 +49,7 @@ public class LaserTower : SingleTargetTower
 
     private void Update()
     {
-        if (!currentTarget)
-        {
+        if (!tTracker.CurrentTarget)
             laserLine.enabled = false;
-        }
     }
-
-
 }
