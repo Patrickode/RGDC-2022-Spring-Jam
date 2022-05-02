@@ -9,7 +9,7 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
     [SerializeField] private GridTile tilePrefab;
-    [Tooltip("The dimensions of the grid; y = z, since the grid is flat along the XZ plane.")]
+    [Tooltip("The dimensions of the grid.")]
     [SerializeField] [Min(1)] private Vector3Int gridSize;
     [Tooltip("The distance between each tile's center in the grid.")]
     [SerializeField] private Vector3 tileSpacing;
@@ -34,13 +34,15 @@ public class GridManager : MonoBehaviour
         }
 
 #if UNITY_EDITOR
+        //Since we're initializing, the grid shouldn't have tile children. So, go through any that it does have...
         foreach (Transform child in transform)
-        {
             if (child.CompareTag("Tile"))
-            {
-                UnityEditor.EditorApplication.delayCall += () => { if (this && child) DestroyImmediate(child.gameObject); };
-            }
-        }
+                //...and after all inspectors have updated, destroy them (assuming it's still valid to do so).
+                UnityEditor.EditorApplication.delayCall += () =>
+                {
+                    if (this && child)
+                        DestroyImmediate(child.gameObject);
+                };
 #endif
         tiles = new GridTile[gridSize.x, gridSize.y, gridSize.z];
 
@@ -66,9 +68,8 @@ public class GridManager : MonoBehaviour
                     //  the final tile is init'd.
                     Vector3Int ind = new Vector3Int(x, y, z);
                     Coroutilities.DoWhen(this,
-                        () => { tile.InitTileAdjacency(tiles, ind); },
-                        () => tiles[gridSize.x - 1, gridSize.y - 1, gridSize.z - 1]
-                    );
+                        () => tile.InitTileAdjacency(tiles, ind),
+                        () => tiles[gridSize.x - 1, gridSize.y - 1, gridSize.z - 1]);
                 }
             }
         }
@@ -80,6 +81,7 @@ public class GridManager : MonoBehaviour
     public Vector3 GetGridLinePos(Vector3Int tileIndex, Vector3Int dir)
     {
         Vector3 halfSpaceInDir = Vector3.Scale(dir, tileSpacing / 2);
-        return tiles[tileIndex.x, tileIndex.y, tileIndex.z].transform.position + new Vector3(halfSpaceInDir.x, halfSpaceInDir.y, halfSpaceInDir.z);
+
+        return tiles[tileIndex.x, tileIndex.y, tileIndex.z].transform.position + Vector3.Scale(Vector3.one, halfSpaceInDir);
     }
 }
