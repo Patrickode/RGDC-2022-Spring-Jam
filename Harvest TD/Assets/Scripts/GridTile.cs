@@ -10,16 +10,16 @@ public class GridTile : MonoBehaviour
 {
 #if UNITY_EDITOR
     [Serializable]
-    protected struct KeyTilePair
+    public struct DirTilePair
     {
-        public Vector3Int index;
+        public Vector3Int dir;
         public GridTile tile;
-        public KeyTilePair(Vector3Int index, GridTile tile) { this.index = index; this.tile = tile; }
+        public DirTilePair(Vector3Int index, GridTile tile) { this.dir = index; this.tile = tile; }
     }
 
     [Header("Editor Only Fields")]
     [Tooltip("List of the Dict's values so they can be seen in the inspector; clockwise, starting from LeftForward.")]
-    [SerializeField] private List<KeyTilePair> adjacentTiles = new List<KeyTilePair>();
+    [SerializeField] private List<DirTilePair> adjacentTiles = new List<DirTilePair>();
 #endif
     [Header("Normal Fields")]
     [SerializeField] private Collider tileCollider;
@@ -121,7 +121,7 @@ public class GridTile : MonoBehaviour
                     TrySetConnection(tileMatrix, thisIndex, dir);
 
 #if UNITY_EDITOR
-                    adjacentTiles.Add(new KeyTilePair(dir, tileAdj[dir]));
+                    adjacentTiles.Add(new DirTilePair(dir, tileAdj[dir]));
 #endif
                 }
             }
